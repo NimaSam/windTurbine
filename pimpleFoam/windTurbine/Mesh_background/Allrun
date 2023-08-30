@@ -1,0 +1,36 @@
+#!/bin/sh
+cd ${0%/*} || exit 1    # Run from this directory
+
+# Source tutorial run functions
+. $WM_PROJECT_DIR/bin/tools/RunFunctions
+
+#copy stl files
+cp ../Mesh_airfoils/airfoils.stl ./constant/geometry/
+
+#layerSwitch off
+sed -i 's/snappySwitch false;/snappySwitch true;/' gridSettings
+
+
+#create background grid
+runApplication blockMesh
+runApplication snappyHexMesh -overwrite 
+
+# Create  AMI patches for outer spaces around airfoils
+runApplication createBaffles -overwrite
+runApplication splitBaffles -overwrite
+
+#layerSwitch on
+mv log.snappyHexMesh log.snappyHexMesh1
+rm -rf constant/polyMesh/pointLevel
+rm -rf constant/polyMesh/cellLevel
+
+sed -i 's/snappySwitch true;/snappySwitch false;/' gridSettings
+runApplication snappyHexMesh -overwrite > log.snappyHexMesh2
+
+
+#create 2D grid and translate it to be aligned with airfoil grid
+runApplication extrudeMesh
+runApplication transformPoints "translate=(0 0 -1)"
+
+
+#------------------------------------------------------------------------------

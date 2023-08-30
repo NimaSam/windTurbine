@@ -1,0 +1,75 @@
+#!/bin/sh
+cd ${0%/*} || exit 1    # Run from this directory
+
+# Source tutorial run functions
+. $WM_PROJECT_DIR/bin/tools/RunFunctions
+
+#rotation: bring the rotation degree for airfoils compare to the original airfoil
+# if the airfoils are located in positions 0,90,180, 360 then theta="90 180 360"
+theta="120 240"
+
+#translation: it represents the distance between the propeller (airfoils) to the shaft.
+l=1.5
+
+#grid (airfoils) repeation
+cp -r org Mesh0
+cd Mesh0
+transformPoints "translate=(0 $l 0)"
+touch view.foam
+cd ../
+
+
+for thetai in $theta
+do
+    cp -r Mesh0 Mesh$thetai
+    cd Mesh$thetai
+    transformPoints "Rz=$thetai"
+    cd ..
+done
+
+#merge all sub-meshes
+cp -r Mesh0 Mesh_airfoils
+cd Mesh_airfoils
+for thetai in $theta
+do
+ mergeMeshes . ../Mesh$thetai -overwrite
+done
+
+#convert the airfoils grid to stl file
+surfaceMeshTriangulate airfoils.stl
+cd ..
+
+
+#create background mesh
+cd Mesh_background
+./Allrun
+cd ../
+
+#create total mesh
+cp -r Mesh_background Mesh_total
+cd  Mesh_total
+mergeMeshes . ../Mesh_airfoils -overwrite
+
+#edit the movinge frame cellzone
+topoSet
+#edit createPatchDict with visual inspection of grid
+createPatch -overwrite
+
+#check the grid motion
+#moveMesh
+#checkMesh > log.checkMesh
+
+cp -r 0.org/ 0
+
+
+#show the final grid
+touch view.foam
+#paraview view.foam
+
+ 
+
+
+
+
+
+#------------------------------------------------------------------------------

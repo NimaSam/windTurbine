@@ -1,0 +1,17 @@
+#!/bin/sh
+cd ${0%/*} || exit 1    # Run from this directory
+
+# Source tutorial clean functions
+. $WM_PROJECT_DIR/bin/tools/CleanFunctions
+
+theta="0 120 240"
+
+for thetai in $theta
+do
+    rm -r Mesh$thetai
+done
+
+rm -r Mesh_airfoils Mesh_total
+cd Mesh_background
+./Allclean
+#------------------------------------------------------------------------------

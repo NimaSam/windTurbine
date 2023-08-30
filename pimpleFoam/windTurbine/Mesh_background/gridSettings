@@ -1,0 +1,21 @@
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+//dimension of background grid
+xMin	-10;
+xMax	 25;
+
+yMin	-10;
+yMax     10;
+
+Nx     140;
+Ny     80;
+
+
+//snappyHexMesh settings:it represents the radius of outer moving part.
+r_MF	3;
+
+
+//add layer switch
+snappySwitch false;
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+

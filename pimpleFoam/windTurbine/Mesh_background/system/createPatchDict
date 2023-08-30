@@ -1,0 +1,79 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+  =========                 |
+  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Version:  9
+     \\/     M anipulation  |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    format      ascii;
+    class       dictionary;
+    object      createPatchDict;
+}
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+pointSync false;
+
+// AMI created from internal boundary with cylinder and cylinder_slave patches
+
+masterAMI
+{
+    name            AMI1;
+    patchInfo
+    {
+        type            cyclicAMI;
+        matchTolerance  0.0001;
+        neighbourPatch  AMI2;
+    }
+    constructFrom patches;
+    patches (BC2);
+}
+
+patches
+(
+    // master AMI patch
+    {
+        $masterAMI;
+    }
+
+    // slave AMI patch
+    {
+        $masterAMI;
+        name            AMI2;
+        patchInfo
+        {
+            neighbourPatch  AMI1;
+        }
+        patches (airfoils_BC2);
+    }
+    
+    
+   {
+    name            frontAndBack;
+    patchInfo
+    {
+        type            empty;
+    }
+    constructFrom patches;
+    patches (BC5 BC6 back front);
+   }
+
+  
+  {
+    name            airfoils;
+    patchInfo
+    {
+        type            wall;
+    }
+    constructFrom patches;
+    patches (BC1);
+  }
+
+);
+
+
+
+
+// ************************************************************************* //
