@@ -9,6 +9,10 @@ into a fully structured wind turbine computational domain with a rotating region
   ![pyHyp airfoil grid](./.pics/airfoil.png)
 
 
+The output grid format is in **.cgns**, which can be converted into an OpenFOAM polyMesh using the method available at [this GitHub repository](https://github.com/wyldckat/cgnsToFromFoam).
+
+The remaining steps can be easily managed using the provided bash script **Allrun** for OpenFOAM-9. Here's a general outline of the process:
+
 - rotate and replicate grid region around airfoils
   ![replicated airfoils](./.pics/airfoils.png)
 
